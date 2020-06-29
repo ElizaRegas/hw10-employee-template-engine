@@ -10,36 +10,99 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+
 inquirer
   .prompt([
     {
       type: "list",
       name: "employeeType",
-      message: "Please select your employee type:",
-      choices: [
-        "Manager",
-        "Engineer",
-        "Intern"
-      ]
+      message: "Please select an employee type:",
+      choices: ["Manager", "Engineer", "Intern"],
     },
-    
-    // this.name
-    // * id
-    // * email
+    {
+      type: "input",
+      name: "name",
+      message: "Please enter the employee's first and last name:",
+    },
+    {
+      type: "input",
+      name: "id",
+      message: "Please enter the employee ID:",
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "Please enter the employee's email:",
+    },
+    // {
+    //   type: "confirm",
+    //   name: "addAnother",
+    //   message: "Do you wish to add another employee?"
+    // }
+
     // * getName()
     // * getId()
     // * getEmail()
     // * getRole() // Returns 'Employee'
-  ]).then((results) => {
+  ])
+  .then((results) => {
     console.log(results);
-  }).catch((err) => {
+    switch (results.employeeType) {
+      case "Manager":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "officeNumber",
+              message: "Enter Manager's office number:",
+            },
+          ])
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        break;
+      case "Engineer":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "gitHubUserName",
+              message: "Enter Engineer's GitHub user name:",
+            },
+          ])
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        break;
+      case "Intern":
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "schoolName",
+              message: "Enter Intern's school name:",
+            },
+          ])
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        break;
+    }
+  })
+  .catch((err) => {
     console.log(err);
-  }) 
-    
-  
+  });
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
