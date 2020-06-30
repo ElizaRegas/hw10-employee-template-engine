@@ -13,97 +13,123 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function enterEmployeeInfo() {
-inquirer
-  .prompt([
-    {
-      type: "list",
-      name: "employeeType",
-      message: "Please select an employee type:",
-      choices: ["Manager", "Engineer", "Intern"],
-    },
-    {
-      type: "input",
-      name: "name",
-      message: "Please enter the employee's first and last name:",
-    },
-    {
-      type: "input",
-      name: "id",
-      message: "Please enter the employee ID:",
-    },
-    {
-      type: "input",
-      name: "email",
-      message: "Please enter the employee's email:",
-    }
-
-    // * getName()
-    // * getId()
-    // * getEmail()
-    // * getRole() // Returns 'Employee'
-  ])
-  .then((results) => {
-    switch (results.employeeType) {
-      case "Manager":
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "officeNumber",
-              message: "Enter Manager's office number:",
-            }
-          ])
-          .then((res) => {
-            results.officeNumber = res.officeNumber;
-            continueGatheringEmployeeInfo(results);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        break;
-      case "Engineer":
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "gitHubUserName",
-              message: "Enter Engineer's GitHub user name:",
-            }
-          ])
-          .then((res) => {
-            results.gitHubUserName = res.gitHubUserName;
-            continueGatheringEmployeeInfo(results);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        break;
-      case "Intern":
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "schoolName",
-              message: "Enter Intern's school name:",
-            }
-          ])
-          .then((res) => {
-            results.schoolName = res.schoolName;
-            continueGatheringEmployeeInfo(results);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        break;
-    }
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+function getManagerInfo() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is your manager's name?",
+      },
+      {
+        type: "input",
+        name: "id",
+        message: "What is your manager's ID?",
+      },
+      {
+        type: "input",
+        name: "email",
+        message: "What is your manager's email?",
+      },
+      {
+        type: "input",
+        name: "officeNumber",
+        message: "What is your manager's office number?",
+      },
+    ])
+    .then((results) => {
+      results.employeeType = "Manager";
+      continueGatheringEmployeeInfo(results);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
-enterEmployeeInfo();
+getManagerInfo();
+
+function enterEmployeeInfo() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "employeeType",
+        message: "Which type of team member would you like to add?",
+        choices: ["Engineer", "Intern"],
+      },
+    ])
+    .then((results) => {
+      switch (results.employeeType) {
+        case "Engineer":
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "name",
+                message: "What is your engineer's name?",
+              },
+              {
+                type: "input",
+                name: "id",
+                message: "What is your engineer's ID?",
+              },
+              {
+                type: "input",
+                name: "email",
+                message: "What is your engineer's email?",
+              },
+              {
+                type: "input",
+                name: "gitHubUserName",
+                message: "What is your engineer's GitHub username?",
+              },
+            ])
+            .then((res) => {
+              res.employeeType = "Engineer";
+              continueGatheringEmployeeInfo(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          break;
+        case "Intern":
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "name",
+                message: "What is your intern's name?",
+              },
+              {
+                type: "input",
+                name: "id",
+                message: "What is your intern's ID?",
+              },
+              {
+                type: "input",
+                name: "email",
+                message: "What is your intern's email?",
+              },
+              {
+                type: "input",
+                name: "schoolName",
+                message: "What is your intern's school?",
+              },
+            ])
+            .then((res) => {
+              res.employeeType = "Intern";
+              continueGatheringEmployeeInfo(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          break;
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 function continueGatheringEmployeeInfo(results) {
   inquirer
@@ -111,13 +137,32 @@ function continueGatheringEmployeeInfo(results) {
       {
         type: "confirm",
         name: "addAnother",
-        message: "Do you wish to add another employee?"
+        message: "Do you wish to add another employee?",
+      },
+    ])
+    .then((res) => {
+      let employeeObj;
+
+      switch (results.employeeType) {
+        case "Manager":
+          employeeObj = new Manager(results.name, results.id, results.email, results.officeNumber);
+          break;
+        case "Engineer":
+          employeeObj = new Engineer(results.name, results.id, results.email, results.gitHubUserName);
+          break;
+        case "Intern":
+          employeeObj = new Intern(results.name, results.id, results.email, results.schoolName);
+          break;
       }
-    ]).then((res2) => {
-      employeeInfo.push(results);
-      console.log(employeeInfo);
-      if (res2.addAnother) {
+      employeeInfo.push(employeeObj);
+      if (res.addAnother) {
         enterEmployeeInfo();
+      } else {
+        const renderInfo = render(employeeInfo);
+        fs.writeFile('./output/index.html', renderInfo, (err) => {
+          if (err) throw err;
+          console.log('The file has been saved!');
+        });
       }
     })
     .catch((err) => {
