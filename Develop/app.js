@@ -1,20 +1,26 @@
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
+// node modules
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+// class constructors
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+// json data elements
 const managerQuestions = require("./data/managerQuestions.json");
 const employeeType = require("./data/employeeType.json");
-const engineerQuestions = require("./data/engineerQuestions.json");
-const internQuestions = require("./data/internQuestions.json");
-let employeeInfo = [];
-
+const engineerQuestions = require("./data/engineerQuestions.js");
+console.log(engineerQuestions);
+const internQuestions = require("./data/internQuestions.js");
+const addEmployee = require("./data/addEmployee.json");
+// render function
+const render = require("./lib/htmlRenderer");
+// global variables
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
+const employeeInfo = [];
 
-const render = require("./lib/htmlRenderer");
-
+// function to get info about the manager
 const getManagerInfo = () => {
   inquirer
     .prompt(managerQuestions)
@@ -25,10 +31,9 @@ const getManagerInfo = () => {
     .catch((err) => {
       console.log(err);
     });
-}
+};
 
-getManagerInfo();
-
+// function to gather employee info for engineers and interns
 const enterEmployeeInfo = () => {
   inquirer
     .prompt(employeeType)
@@ -36,7 +41,7 @@ const enterEmployeeInfo = () => {
       switch (results.employeeType) {
         case "Engineer":
           inquirer
-            .prompt(engineerQuestions)
+            .prompt(engineerQuestions())
             .then((res) => {
               res.employeeType = "Engineer";
               continueGatheringEmployeeInfo(res);
@@ -47,7 +52,7 @@ const enterEmployeeInfo = () => {
           break;
         case "Intern":
           inquirer
-            .prompt(internQuestions)
+            .prompt(internQuestions())
             .then((res) => {
               res.employeeType = "Intern";
               continueGatheringEmployeeInfo(res);
@@ -61,29 +66,25 @@ const enterEmployeeInfo = () => {
     .catch((err) => {
       console.log(err);
     });
-}
+};
 
+// function to determine if more employees need to be added
 const continueGatheringEmployeeInfo = (results) => {
+  const { name, id, email } = results;
   inquirer
-    .prompt([
-      {
-        type: "confirm",
-        name: "addAnother",
-        message: "Do you wish to add another employee?",
-      },
-    ])
+    .prompt(addEmployee)
     .then((res) => {
       let employeeObj;
 
       switch (results.employeeType) {
         case "Manager":
-          employeeObj = new Manager(results.name, results.id, results.email, results.officeNumber);
+          employeeObj = new Manager(name, id, email, results.officeNumber);
           break;
         case "Engineer":
-          employeeObj = new Engineer(results.name, results.id, results.email, results.gitHubUserName);
+          employeeObj = new Engineer(name, id, email, results.gitHubUserName);
           break;
         case "Intern":
-          employeeObj = new Intern(results.name, results.id, results.email, results.schoolName);
+          employeeObj = new Intern(name, id, email, results.schoolName);
           break;
       }
       employeeInfo.push(employeeObj);
@@ -100,4 +101,7 @@ const continueGatheringEmployeeInfo = (results) => {
     .catch((err) => {
       console.log(err);
     });
-}
+};
+
+// program begins question prompts by calling this function
+getManagerInfo();
