@@ -1,0 +1,7 @@
+[
+  {
+    "type": "confirm",
+    "name": "addAnother",
+    "message": "Do you wish to add another employee?"
+  }
+]
