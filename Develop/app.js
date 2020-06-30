@@ -6,11 +6,10 @@ const fs = require("fs");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-// json data elements
-const managerQuestions = require("./data/managerQuestions.json");
+// json and js data elements
+const managerQuestions = require("./data/managerQuestions.js");
 const employeeType = require("./data/employeeType.json");
 const engineerQuestions = require("./data/engineerQuestions.js");
-console.log(engineerQuestions);
 const internQuestions = require("./data/internQuestions.js");
 const addEmployee = require("./data/addEmployee.json");
 // render function
@@ -23,7 +22,7 @@ const employeeInfo = [];
 // function to get info about the manager
 const getManagerInfo = () => {
   inquirer
-    .prompt(managerQuestions)
+    .prompt(managerQuestions())
     .then((results) => {
       results.employeeType = "Manager";
       continueGatheringEmployeeInfo(results);
