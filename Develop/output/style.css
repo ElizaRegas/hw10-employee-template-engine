@@ -1,0 +1,18 @@
+body {
+  background-image: url(../../Assets/background.jpg);
+}
+.employee-card {
+  margin: 0% 1%;
+  font-family: 'Roboto', sans-serif;
+}
+.jumbotron {
+  background-color: black;
+}
+.team-heading {
+  color: white;
+  font-family: 'Black Ops One', cursive;
+}
+.text-center {
+  text-align: center!important;
+  font-size: 4rem;
+}
