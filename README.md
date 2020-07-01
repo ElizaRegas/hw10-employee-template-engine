@@ -4,7 +4,7 @@
 
 ## Description
 
-This was a homework assignment to meet the requirements of GA Tech's Full Stack Web Development Program. We were asked to build a CLI program that would take in information about a manager and his or her employees, and then return the information in a structured template.
+This was a homework assignment to meet the requirements of GA Tech's Full Stack Web Development Program. We were asked to build a Node CLI for managers that takes in information about employees and generates an HTML webpage that displays summaries for each person. We utilized html, css, javascript, and node to build the app.
 
 ![My Project](./Assets/TeamPic.png)
 
